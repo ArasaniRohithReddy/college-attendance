@@ -86,8 +86,8 @@ export const useCourse = (id: string) =>
 export const useCoursesByDepartment = (deptId: string) =>
   useQuery({ queryKey: ['courses', 'dept', deptId], queryFn: () => coursesApi.byDepartment(deptId), enabled: !!deptId });
 
-export const useCoursesByFaculty = (facId: string) =>
-  useQuery({ queryKey: ['courses', 'faculty', facId], queryFn: () => coursesApi.byFaculty(facId), enabled: !!facId });
+export const useCoursesByFaculty = () =>
+  useQuery({ queryKey: ['courses', 'faculty'], queryFn: () => coursesApi.byFaculty() });
 
 export function useCreateCourse() {
   const qc = useQueryClient();

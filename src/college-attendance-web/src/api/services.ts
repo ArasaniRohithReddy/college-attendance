@@ -29,8 +29,8 @@ export const authApi = {
     api.post<AuthResponse>('/auth/google-login', req).then(r => r.data),
   refresh: (req: RefreshTokenRequest) =>
     api.post<AuthResponse>('/auth/refresh', req).then(r => r.data),
-  me: () => api.get<UserDto>('/auth/me').then(r => r.data),
-  logout: () => api.post('/auth/logout'),
+  me: () => api.get<UserDto>('/users/me').then(r => r.data),
+  logout: () => api.post('/auth/revoke'),
 };
 
 // ===== Users =====
@@ -41,7 +41,7 @@ export const usersApi = {
   create: (req: CreateUserRequest) => api.post<UserDto>('/users', req).then(r => r.data),
   update: (id: string, req: UpdateUserRequest) => api.put(`/users/${id}`, req),
   delete: (id: string) => api.delete(`/users/${id}`),
-  byRole: (role: number) => api.get<UserDto[]>(`/users/role/${role}`).then(r => r.data),
+  byRole: (role: number) => api.get<PagedResult<UserDto>>('/users', { params: { role } }).then(r => r.data.items ?? []),
 };
 
 // ===== Departments =====
@@ -59,22 +59,22 @@ export const coursesApi = {
   get: (id: string) => api.get<CourseDto>(`/courses/${id}`).then(r => r.data),
   create: (req: CreateCourseRequest) => api.post<CourseDto>('/courses', req).then(r => r.data),
   byDepartment: (deptId: string) => api.get<CourseDto[]>(`/courses/department/${deptId}`).then(r => r.data),
-  byFaculty: (facId: string) => api.get<CourseDto[]>(`/courses/faculty/${facId}`).then(r => r.data),
+  byFaculty: () => api.get<CourseDto[]>('/courses/my-courses').then(r => r.data),
   enroll: (courseId: string, studentId: string) =>
     api.post(`/courses/${courseId}/enroll`, { studentId }),
   unenroll: (courseId: string, studentId: string) =>
-    api.delete(`/courses/${courseId}/enroll/${studentId}`),
+    api.delete(`/courses/${courseId}/unenroll/${studentId}`),
 };
 
 // ===== Class Sessions =====
 export const sessionsApi = {
   list: (courseId?: string) =>
-    api.get<ClassSessionDto[]>('/classsessions', { params: { courseId } }).then(r => r.data),
+    courseId ? api.get<ClassSessionDto[]>(`/classsessions/course/${courseId}`).then(r => r.data) : api.get<ClassSessionDto[]>('/classsessions/today').then(r => r.data),
   get: (id: string) => api.get<ClassSessionDto>(`/classsessions/${id}`).then(r => r.data),
   create: (req: CreateClassSessionRequest) =>
     api.post<ClassSessionDto>('/classsessions', req).then(r => r.data),
-  start: (id: string) => api.post(`/classsessions/${id}/start`),
-  end: (id: string) => api.post(`/classsessions/${id}/end`),
+  start: (id: string) => api.put(`/classsessions/${id}/start`),
+  end: (id: string) => api.put(`/classsessions/${id}/end`),
   today: () => api.get<ClassSessionDto[]>('/classsessions/today').then(r => r.data),
 };
 
@@ -83,8 +83,8 @@ export const qrApi = {
   generate: (req: GenerateQRRequest) =>
     api.post<QRSessionDto>('/qr/generate', req).then(r => r.data),
   active: (sessionId: string) =>
-    api.get<QRSessionDto>(`/qr/active/${sessionId}`).then(r => r.data),
-  deactivate: (id: string) => api.post(`/qr/${id}/deactivate`),
+    api.get<QRSessionDto>(`/qr/validate/${sessionId}`).then(r => r.data),
+  deactivate: (id: string) => api.post(`/qr/deactivate/${id}`),
 };
 
 // ===== Attendance =====
@@ -96,9 +96,9 @@ export const attendanceApi = {
   bySession: (sessionId: string) =>
     api.get<AttendanceDto[]>(`/attendance/session/${sessionId}`).then(r => r.data),
   byStudent: (studentId: string) =>
-    api.get<AttendanceDto[]>(`/attendance/student/${studentId}`).then(r => r.data),
+    api.get<AttendanceDto[]>(`/attendance/student/${studentId}/report`).then(r => r.data),
   report: (courseId: string) =>
-    api.get<AttendanceReportDto[]>(`/attendance/report/${courseId}`).then(r => r.data),
+    api.get<AttendanceReportDto[]>(`/attendance/course/${courseId}/report`).then(r => r.data),
   defaulters: (threshold?: number) =>
     api.get<AttendanceReportDto[]>('/attendance/defaulters', { params: { threshold } }).then(r => r.data),
 };
@@ -107,15 +107,15 @@ export const attendanceApi = {
 export const hostelApi = {
   list: () => api.get<HostelDto[]>('/hostel').then(r => r.data),
   create: (req: CreateHostelRequest) => api.post<HostelDto>('/hostel', req).then(r => r.data),
-  logs: (hostelId: string, date?: string) =>
-    api.get<HostelLogDto[]>(`/hostel/${hostelId}/logs`, { params: { date } }).then(r => r.data),
+  logs: (_hostelId?: string, date?: string) =>
+    api.get<HostelLogDto[]>('/hostel/logs/my', { params: { date } }).then(r => r.data),
   logEntry: (req: CreateHostelLogRequest) => api.post('/hostel/log', req),
 };
 
 // ===== Mess =====
 export const messApi = {
   logs: (date?: string) =>
-    api.get<MessLogDto[]>('/mess/logs', { params: { date } }).then(r => r.data),
+    api.get<MessLogDto[]>('/mess/logs/my', { params: { date } }).then(r => r.data),
   log: (req: CreateMessLogRequest) => api.post('/mess/log', req),
   analytics: (from?: string, to?: string) =>
     api.get<MessAnalyticsDto[]>('/mess/analytics', { params: { from, to } }).then(r => r.data),
@@ -124,19 +124,19 @@ export const messApi = {
 // ===== Outing =====
 export const outingApi = {
   list: (status?: number) =>
-    api.get<OutingRequestDto[]>('/outing', { params: { status } }).then(r => r.data),
-  get: (id: string) => api.get<OutingRequestDto>(`/outing/${id}`).then(r => r.data),
+    api.get<OutingRequestDto[]>('/outing/pending', { params: { status } }).then(r => r.data),
+  get: (id: string) => api.get<OutingRequestDto>(`/outing/${id}/gate-pass`).then(r => r.data),
   create: (req: CreateOutingRequestDto) =>
-    api.post<OutingRequestDto>('/outing', req).then(r => r.data),
+    api.post<OutingRequestDto>('/outing/request', req).then(r => r.data),
   approve: (id: string, remarks?: string) =>
-    api.post(`/outing/${id}/approve`, { remarks }),
+    api.put(`/outing/${id}/approve`, { remarks }),
   reject: (id: string, remarks: string) =>
-    api.post(`/outing/${id}/reject`, { remarks }),
+    api.put(`/outing/${id}/reject`, { remarks }),
   checkout: (id: string, remarks?: string) =>
-    api.post(`/outing/${id}/checkout`, { remarks }),
+    api.put(`/outing/${id}/checkout`, { remarks }),
   checkin: (id: string, remarks?: string) =>
-    api.post(`/outing/${id}/checkin`, { remarks }),
-  myRequests: () => api.get<OutingRequestDto[]>('/outing/my').then(r => r.data),
+    api.put(`/outing/${id}/checkin`, { remarks }),
+  myRequests: () => api.get<OutingRequestDto[]>('/outing/my-requests').then(r => r.data),
 };
 
 // ===== Notifications =====
@@ -152,8 +152,8 @@ export const analyticsApi = {
   dashboard: () => api.get<DashboardAnalyticsDto>('/analytics/dashboard').then(r => r.data),
   predictions: () =>
     api.get<StudentAttendancePredictionDto[]>('/analytics/predictions').then(r => r.data),
-  courseAttendanceTrend: (courseId: string, days = 30) =>
-    api.get(`/analytics/course/${courseId}/trend`, { params: { days } }).then(r => r.data),
+  courseAttendanceTrend: (courseId: string) =>
+    api.get(`/analytics/course/${courseId}`).then(r => r.data),
 };
 
 // ===== Gamification =====
@@ -163,7 +163,7 @@ export const gamificationApi = {
   badges: () => api.get<StudentBadgeDto[]>('/gamification/badges').then(r => r.data),
   leaderboard: (period = 'monthly', dept?: string) =>
     api.get<LeaderboardEntryDto[]>('/gamification/leaderboard', { params: { period, departmentId: dept } }).then(r => r.data),
-  recalculate: (studentId: string) => api.post(`/gamification/recalculate/${studentId}`),
+  recalculate: () => api.post('/gamification/recalculate/streaks'),
 };
 
 // ===== Leave Management =====
@@ -182,16 +182,16 @@ export const leaveApi = {
 // ===== Emergency SOS =====
 export const emergencyApi = {
   create: (req: CreateSOSRequest) => api.post<EmergencySOSDto>('/emergency/sos', req).then(r => r.data),
-  active: () => api.get<EmergencySOSDto[]>('/emergency/active').then(r => r.data),
-  acknowledge: (id: string) => api.post(`/emergency/${id}/acknowledge`),
-  resolve: (id: string, req: ResolveSOSRequest) => api.post(`/emergency/${id}/resolve`, req),
+  active: () => api.get<EmergencySOSDto[]>('/emergency/sos/active').then(r => r.data),
+  acknowledge: (id: string) => api.post(`/emergency/sos/${id}/acknowledge`),
+  resolve: (id: string, req: ResolveSOSRequest) => api.post(`/emergency/sos/${id}/resolve`, req),
   history: (page = 1, size = 20) =>
-    api.get<PagedResult<EmergencySOSDto>>('/emergency/history', { params: { page, pageSize: size } }).then(r => r.data),
+    api.get<PagedResult<EmergencySOSDto>>('/emergency/sos/history', { params: { page, pageSize: size } }).then(r => r.data),
 };
 
 // ===== Offline Sync =====
 export const offlineSyncApi = {
-  sync: (req: SyncBatchRequest) => api.post<SyncBatchResponse>('/offlinesync/sync', req).then(r => r.data),
+  sync: (req: SyncBatchRequest) => api.post<SyncBatchResponse>('/offlinesync/batch', req).then(r => r.data),
   pending: () => api.get<OfflineSyncLogDto[]>('/offlinesync/pending').then(r => r.data),
   lastSync: () => api.get<string>('/offlinesync/last-sync').then(r => r.data),
 };
@@ -200,11 +200,11 @@ export const offlineSyncApi = {
 export const fraudApi = {
   logs: (page = 1, size = 20, resolved?: boolean) =>
     api.get<PagedResult<FraudLogDto>>('/fraud/logs', { params: { page, pageSize: size, resolved } }).then(r => r.data),
-  resolve: (id: string, req: ResolveFraudRequest) => api.post(`/fraud/${id}/resolve`, req),
+  resolve: (id: string, req: ResolveFraudRequest) => api.post(`/fraud/logs/${id}/resolve`, req),
   devices: (userId: string) => api.get<DeviceBindingDto[]>(`/fraud/devices/${userId}`).then(r => r.data),
-  bindDevice: (userId: string, req: BindDeviceRequest) => api.post<DeviceBindingDto>(`/fraud/devices/${userId}/bind`, req).then(r => r.data),
-  validateDevice: (userId: string, fingerprint: string) =>
-    api.get<boolean>(`/fraud/devices/${userId}/validate`, { params: { fingerprint } }).then(r => r.data),
+  bindDevice: (_userId: string, req: BindDeviceRequest) => api.post<DeviceBindingDto>('/fraud/devices/bind', req).then(r => r.data),
+  validateDevice: (_userId: string, fingerprint: string) =>
+    api.get<boolean>('/fraud/devices/validate', { params: { fingerprint } }).then(r => r.data),
 };
 
 // ===== Admin Config =====
@@ -243,7 +243,7 @@ export const advancedAnalyticsApi = {
   facultyStrictness: () =>
     api.get<FacultyStrictnessDto[]>('/analytics/advanced/faculty-strictness').then(r => r.data),
   courseAnalytics: () =>
-    api.get<CourseAnalyticsDto[]>('/analytics/advanced/course-analytics').then(r => r.data),
+    api.get<CourseAnalyticsDto[]>('/analytics/advanced/courses').then(r => r.data),
   curfewLogs: (page = 1, size = 20) =>
     api.get<PagedResult<CurfewLogDto>>('/analytics/advanced/curfew/logs', { params: { page, pageSize: size } }).then(r => r.data),
   curfewConfig: () => api.get<CurfewConfigDto>('/analytics/advanced/curfew/config').then(r => r.data),
