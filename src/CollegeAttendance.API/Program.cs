@@ -16,7 +16,11 @@ var config = builder.Configuration;
 
 // ---------- Database ----------
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(config.GetConnectionString("DefaultConnection"))
+    options.UseSqlServer(config.GetConnectionString("DefaultConnection"),
+               sqlOptions => sqlOptions.EnableRetryOnFailure(
+                   maxRetryCount: 5,
+                   maxRetryDelay: TimeSpan.FromSeconds(30),
+                   errorNumbersToAdd: null))
            .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
 // ---------- Repositories ----------
@@ -169,11 +173,24 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<AttendanceHub>("/hubs/attendance");
 
-// Auto-migrate database
-using (var scope = app.Services.CreateScope())
+// Auto-migrate database with retry for transient Azure SQL errors
+var retryCount = 0;
+const int maxRetries = 5;
+while (true)
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await db.Database.MigrateAsync();
+    try
+    {
+        using var scope = app.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await db.Database.MigrateAsync();
+        break;
+    }
+    catch (Exception ex) when (retryCount < maxRetries)
+    {
+        retryCount++;
+        app.Logger.LogWarning(ex, "Database migration attempt {Attempt} failed. Retrying in {Delay}s...", retryCount, retryCount * 5);
+        await Task.Delay(TimeSpan.FromSeconds(retryCount * 5));
+    }
 }
 
 app.Run();
