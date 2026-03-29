@@ -33,13 +33,6 @@ public class AuthService : IAuthService
             Audience = new[] { _configuration["Google:ClientId"] }
         });
 
-        // Validate college domain
-        var allowedDomain = _configuration["Google:AllowedDomain"];
-        if (!string.IsNullOrEmpty(allowedDomain) && !payload.Email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new UnauthorizedAccessException("Only college domain emails are allowed");
-        }
-
         var user = await _userRepo.Query()
             .Include(u => u.Department)
             .FirstOrDefaultAsync(u => u.Email == payload.Email);
