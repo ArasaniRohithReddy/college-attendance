@@ -325,8 +325,8 @@ export function useCancelLeave() {
 }
 
 // ===== Emergency SOS =====
-export const useActiveEmergencies = () =>
-  useQuery({ queryKey: ['emergency', 'active'], queryFn: emergencyApi.active, refetchInterval: 10000 });
+export const useActiveEmergencies = (enabled = true) =>
+  useQuery({ queryKey: ['emergency', 'active'], queryFn: emergencyApi.active, refetchInterval: 10000, enabled });
 
 export const useEmergencyHistory = (page = 1, size = 20) =>
   useQuery({ queryKey: ['emergency', 'history', page, size], queryFn: () => emergencyApi.history(page, size) });
