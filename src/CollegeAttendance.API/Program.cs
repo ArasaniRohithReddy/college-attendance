@@ -16,7 +16,8 @@ var config = builder.Configuration;
 
 // ---------- Database ----------
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(config.GetConnectionString("DefaultConnection"))
+           .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
 
 // ---------- Repositories ----------
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
