@@ -26,7 +26,7 @@ import type {
 // ===== Auth =====
 export const authApi = {
   googleLogin: (req: GoogleLoginRequest) =>
-    api.post<AuthResponse>('/auth/google', req).then(r => r.data),
+    api.post<AuthResponse>('/auth/google-login', req).then(r => r.data),
   refresh: (req: RefreshTokenRequest) =>
     api.post<AuthResponse>('/auth/refresh', req).then(r => r.data),
   me: () => api.get<UserDto>('/auth/me').then(r => r.data),

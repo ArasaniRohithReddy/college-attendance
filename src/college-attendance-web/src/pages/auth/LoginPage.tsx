@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -20,28 +20,32 @@ const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? '';
 export default function LoginPage() {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const callbackRef = useRef(login);
+  const initializedRef = useRef(false);
+
+  useEffect(() => {
+    callbackRef.current = login;
+  }, [login]);
 
   useEffect(() => {
     if (isAuthenticated) navigate('/dashboard', { replace: true });
   }, [isAuthenticated, navigate]);
 
-  const handleCredentialResponse = useCallback(
-    async (response: { credential: string }) => {
+  useEffect(() => {
+    if (initializedRef.current) return;
+
+    const handleCredentialResponse = async (response: { credential: string }) => {
       try {
-        await login(response.credential);
+        await callbackRef.current(response.credential);
         navigate('/dashboard', { replace: true });
       } catch {
         alert('Login failed. Please try again.');
       }
-    },
-    [login, navigate]
-  );
+    };
 
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.onload = () => {
+    const initGoogle = () => {
+      if (initializedRef.current) return;
+      initializedRef.current = true;
       window.google?.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
         callback: handleCredentialResponse,
@@ -56,9 +60,17 @@ export default function LoginPage() {
         });
       }
     };
-    document.head.appendChild(script);
-    return () => { document.head.removeChild(script); };
-  }, [handleCredentialResponse]);
+
+    if (window.google?.accounts) {
+      initGoogle();
+    } else {
+      const script = document.createElement('script');
+      script.src = 'https://accounts.google.com/gsi/client';
+      script.async = true;
+      script.onload = initGoogle;
+      document.head.appendChild(script);
+    }
+  }, [navigate]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-indigo-50">
