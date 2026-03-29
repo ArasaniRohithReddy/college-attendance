@@ -69,6 +69,11 @@ public class AppDbContext : DbContext
             entity.Property(d => d.Name).HasMaxLength(200);
             entity.Property(d => d.Code).HasMaxLength(20);
             entity.HasQueryFilter(d => !d.IsDeleted);
+
+            entity.HasOne(d => d.HeadOfDepartment)
+                .WithMany()
+                .HasForeignKey(d => d.HeadOfDepartmentId)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         // Course
@@ -234,12 +239,12 @@ public class AppDbContext : DbContext
             entity.HasOne(o => o.ApprovedByWarden)
                 .WithMany()
                 .HasForeignKey(o => o.ApprovedByWardenId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(o => o.ProcessedBySecurity)
                 .WithMany()
                 .HasForeignKey(o => o.ProcessedBySecurityId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         // Notification

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CollegeAttendance.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260329070345_InitialCreate")]
+    [Migration("20260329145910_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -104,6 +104,53 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                     b.ToTable("AttendanceRecords");
                 });
 
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.AttendanceStreak", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CurrentStreak")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastPresentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LongestStreak")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StreakStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("TotalPresentDays")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId")
+                        .IsUnique();
+
+                    b.ToTable("AttendanceStreaks");
+                });
+
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.AuditLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -161,6 +208,136 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AuditLogs");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.Badge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("IconUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RuleExpression")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Badges");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f1000000-0000-0000-0000-000000000001"),
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Marked attendance for the first time",
+                            IconUrl = "🎉",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Name = "First Scan",
+                            SortOrder = 1,
+                            Type = 8
+                        },
+                        new
+                        {
+                            Id = new Guid("f1000000-0000-0000-0000-000000000002"),
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "100% attendance for a full week",
+                            IconUrl = "⚔️",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Name = "Week Warrior",
+                            RuleExpression = "streak >= 5",
+                            SortOrder = 2,
+                            Type = 5
+                        },
+                        new
+                        {
+                            Id = new Guid("f1000000-0000-0000-0000-000000000003"),
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "100% attendance for a full month",
+                            IconUrl = "🏆",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Name = "Monthly Champion",
+                            RuleExpression = "streak >= 22",
+                            SortOrder = 3,
+                            Type = 6
+                        },
+                        new
+                        {
+                            Id = new Guid("f1000000-0000-0000-0000-000000000004"),
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Maintained a 30-day attendance streak",
+                            IconUrl = "🔥",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Name = "Streak Master",
+                            RuleExpression = "streak >= 30",
+                            SortOrder = 4,
+                            Type = 3
+                        },
+                        new
+                        {
+                            Id = new Guid("f1000000-0000-0000-0000-000000000005"),
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "Always on time, never late",
+                            IconUrl = "⏰",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Name = "On-Time Hero",
+                            RuleExpression = "late_count == 0",
+                            SortOrder = 5,
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("f1000000-0000-0000-0000-000000000006"),
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Description = "100% attendance for the entire semester",
+                            IconUrl = "💯",
+                            IsActive = true,
+                            IsDeleted = false,
+                            Name = "Perfect Attendance",
+                            RuleExpression = "attendance == 100",
+                            SortOrder = 6,
+                            Type = 9
+                        });
                 });
 
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.ClassSession", b =>
@@ -419,6 +596,60 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.CurfewLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CurfewTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("HostelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MinutesLate")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ParentNotified")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ParentNotifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ReturnTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HostelId");
+
+                    b.HasIndex("StudentId", "CurfewTime");
+
+                    b.ToTable("CurfewLogs");
+                });
+
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.Department", b =>
                 {
                     b.Property<Guid>("Id")
@@ -442,9 +673,6 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                     b.Property<Guid?>("HeadOfDepartmentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("HeadOfDepartmentId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -464,7 +692,7 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.HasIndex("HeadOfDepartmentId1");
+                    b.HasIndex("HeadOfDepartmentId");
 
                     b.ToTable("Departments");
 
@@ -496,6 +724,190 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                             IsDeleted = false,
                             Name = "Mechanical Engineering"
                         });
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.DeviceBinding", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("BoundAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeviceFingerprint")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("DeviceName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastUsedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Platform")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "DeviceFingerprint")
+                        .IsUnique();
+
+                    b.ToTable("DeviceBindings");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.EmergencySOS", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ResolutionNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RespondedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("RespondedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RespondedById");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("EmergencySOSAlerts");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.FraudLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ClassSessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Evidence")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FraudType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsResolved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ResolutionNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ResolvedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassSessionId");
+
+                    b.HasIndex("ResolvedById");
+
+                    b.HasIndex("UserId", "FraudType");
+
+                    b.ToTable("FraudLogs");
                 });
 
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.Hostel", b =>
@@ -611,6 +1023,135 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                     b.ToTable("HostelLogs");
                 });
 
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.LeaderboardEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("AttendanceScore")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("CalculatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("ConsistencyScore")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Period")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("int");
+
+                    b.Property<double>("StreakScore")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("TotalScore")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("Period", "Rank");
+
+                    b.HasIndex("StudentId", "Period")
+                        .IsUnique();
+
+                    b.ToTable("LeaderboardEntries");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.LeaveRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ApprovedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CourseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DocumentUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LeaveType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("StudentId", "Status");
+
+                    b.ToTable("LeaveRequests");
+                });
+
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.MessLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -706,6 +1247,71 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                     b.HasIndex("UserId", "IsRead");
 
                     b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.OfflineSyncLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("AttemptCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConflictDetails")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid?>("EntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("EntityType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastAttemptAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SyncStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("SyncedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "SyncStatus");
+
+                    b.ToTable("OfflineSyncLogs");
                 });
 
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.OutingRequest", b =>
@@ -849,6 +1455,259 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("QRSessions");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.ScheduledNotification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CronExpression")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRecurring")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSent")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("ScheduledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("TargetRole")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TargetUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TargetUserId");
+
+                    b.HasIndex("ScheduledAt", "IsSent");
+
+                    b.ToTable("ScheduledNotifications");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.StudentBadge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BadgeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EarnedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BadgeId");
+
+                    b.HasIndex("StudentId", "BadgeId")
+                        .IsUnique();
+
+                    b.ToTable("StudentBadges");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.SystemConfig", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DataType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid?>("ModifiedById")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.HasIndex("ModifiedById");
+
+                    b.ToTable("SystemConfigs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f2000000-0000-0000-0000-000000000001"),
+                            Category = 0,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataType = "int",
+                            Description = "Minimum attendance percentage before flagging as defaulter",
+                            IsDeleted = false,
+                            Key = "attendance.defaulter_threshold",
+                            Value = "75"
+                        },
+                        new
+                        {
+                            Id = new Guid("f2000000-0000-0000-0000-000000000002"),
+                            Category = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataType = "int",
+                            Description = "QR code expiration time in seconds",
+                            IsDeleted = false,
+                            Key = "qr.expiration_seconds",
+                            Value = "30"
+                        },
+                        new
+                        {
+                            Id = new Guid("f2000000-0000-0000-0000-000000000003"),
+                            Category = 2,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataType = "int",
+                            Description = "Default geofence radius in meters",
+                            IsDeleted = false,
+                            Key = "geofence.default_radius_meters",
+                            Value = "100"
+                        },
+                        new
+                        {
+                            Id = new Guid("f2000000-0000-0000-0000-000000000004"),
+                            Category = 5,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataType = "string",
+                            Description = "Hostel curfew time (24h format)",
+                            IsDeleted = false,
+                            Key = "hostel.curfew_time",
+                            Value = "22:00"
+                        },
+                        new
+                        {
+                            Id = new Guid("f2000000-0000-0000-0000-000000000005"),
+                            Category = 5,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataType = "int",
+                            Description = "Grace period after curfew before marking violation",
+                            IsDeleted = false,
+                            Key = "hostel.curfew_grace_minutes",
+                            Value = "15"
+                        },
+                        new
+                        {
+                            Id = new Guid("f2000000-0000-0000-0000-000000000006"),
+                            Category = 3,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataType = "int",
+                            Description = "Maximum devices a user can bind",
+                            IsDeleted = false,
+                            Key = "security.max_devices_per_user",
+                            Value = "2"
+                        },
+                        new
+                        {
+                            Id = new Guid("f2000000-0000-0000-0000-000000000007"),
+                            Category = 3,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataType = "bool",
+                            Description = "Automatically flag suspicious attendance",
+                            IsDeleted = false,
+                            Key = "security.fraud_auto_flag",
+                            Value = "true"
+                        },
+                        new
+                        {
+                            Id = new Guid("f2000000-0000-0000-0000-000000000008"),
+                            Category = 6,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataType = "string",
+                            Description = "Score multiplier for active streaks",
+                            IsDeleted = false,
+                            Key = "gamification.streak_bonus_multiplier",
+                            Value = "1.5"
+                        });
                 });
 
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.User", b =>
@@ -1066,6 +1925,17 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.AttendanceStreak", b =>
+                {
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.AuditLog", b =>
                 {
                     b.HasOne("CollegeAttendance.Domain.Entities.User", "User")
@@ -1133,13 +2003,87 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.CurfewLog", b =>
+                {
+                    b.HasOne("CollegeAttendance.Domain.Entities.Hostel", "Hostel")
+                        .WithMany()
+                        .HasForeignKey("HostelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Hostel");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.Department", b =>
                 {
                     b.HasOne("CollegeAttendance.Domain.Entities.User", "HeadOfDepartment")
                         .WithMany()
-                        .HasForeignKey("HeadOfDepartmentId1");
+                        .HasForeignKey("HeadOfDepartmentId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("HeadOfDepartment");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.DeviceBinding", b =>
+                {
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.EmergencySOS", b =>
+                {
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "RespondedBy")
+                        .WithMany()
+                        .HasForeignKey("RespondedById")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("RespondedBy");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.FraudLog", b =>
+                {
+                    b.HasOne("CollegeAttendance.Domain.Entities.ClassSession", "ClassSession")
+                        .WithMany()
+                        .HasForeignKey("ClassSessionId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "ResolvedBy")
+                        .WithMany()
+                        .HasForeignKey("ResolvedById")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ClassSession");
+
+                    b.Navigation("ResolvedBy");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.Hostel", b =>
@@ -1178,6 +2122,49 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                     b.Navigation("VerifiedBy");
                 });
 
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.LeaderboardEntry", b =>
+                {
+                    b.HasOne("CollegeAttendance.Domain.Entities.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.LeaveRequest", b =>
+                {
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "ApprovedBy")
+                        .WithMany()
+                        .HasForeignKey("ApprovedById")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("CollegeAttendance.Domain.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApprovedBy");
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.MessLog", b =>
                 {
                     b.HasOne("CollegeAttendance.Domain.Entities.User", "Student")
@@ -1200,17 +2187,28 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.OfflineSyncLog", b =>
+                {
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.OutingRequest", b =>
                 {
                     b.HasOne("CollegeAttendance.Domain.Entities.User", "ApprovedByWarden")
                         .WithMany()
                         .HasForeignKey("ApprovedByWardenId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("CollegeAttendance.Domain.Entities.User", "ProcessedBySecurity")
                         .WithMany()
                         .HasForeignKey("ProcessedBySecurityId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("CollegeAttendance.Domain.Entities.User", "Student")
                         .WithMany("OutingRequests")
@@ -1244,6 +2242,45 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                     b.Navigation("GeneratedBy");
                 });
 
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.ScheduledNotification", b =>
+                {
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "TargetUser")
+                        .WithMany()
+                        .HasForeignKey("TargetUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("TargetUser");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.StudentBadge", b =>
+                {
+                    b.HasOne("CollegeAttendance.Domain.Entities.Badge", "Badge")
+                        .WithMany("StudentBadges")
+                        .HasForeignKey("BadgeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Badge");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.SystemConfig", b =>
+                {
+                    b.HasOne("CollegeAttendance.Domain.Entities.User", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ModifiedBy");
+                });
+
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.User", b =>
                 {
                     b.HasOne("CollegeAttendance.Domain.Entities.Department", "Department")
@@ -1259,6 +2296,11 @@ namespace CollegeAttendance.Infrastructure.Data.Migrations
                     b.Navigation("Department");
 
                     b.Navigation("Hostel");
+                });
+
+            modelBuilder.Entity("CollegeAttendance.Domain.Entities.Badge", b =>
+                {
+                    b.Navigation("StudentBadges");
                 });
 
             modelBuilder.Entity("CollegeAttendance.Domain.Entities.ClassSession", b =>
