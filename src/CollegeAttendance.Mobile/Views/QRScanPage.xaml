@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:CollegeAttendance.Mobile.ViewModels"
+             x:Class="CollegeAttendance.Mobile.Views.QRScanPage"
+             x:DataType="vm:QRScanViewModel"
+             Title="Scan QR Code"
+             BackgroundColor="#F8FAFC">
+
+    <Grid RowDefinitions="*,Auto">
+        <!-- Scanner / Result area -->
+        <Grid Grid.Row="0">
+            <!-- Placeholder for ZXing scanner - replaced at runtime -->
+            <Border StrokeShape="RoundRectangle 12" BackgroundColor="#1E293B" 
+                    Margin="16" IsVisible="{Binding IsScanning}">
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="16">
+                    <Label Text="&#x1F4F7;" FontSize="64" HorizontalOptions="Center"/>
+                    <Label Text="Point camera at QR code" 
+                           FontSize="16" TextColor="White" HorizontalOptions="Center"/>
+                    <Label Text="The QR code will be scanned automatically" 
+                           FontSize="12" TextColor="#94A3B8" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Result Display -->
+            <VerticalStackLayout VerticalOptions="Center" Padding="32" Spacing="20"
+                                 IsVisible="{Binding IsScanning, Converter={StaticResource InvertedBoolConverter}}">
+                <!-- Success Icon -->
+                <Border StrokeShape="Ellipse" HeightRequest="100" WidthRequest="100"
+                        HorizontalOptions="Center"
+                        BackgroundColor="{Binding IsSuccess, Converter={StaticResource BoolToColorConverter}}">
+                    <Label Text="{Binding IsSuccess, Converter={StaticResource BoolToIconConverter}}" 
+                           FontSize="48" TextColor="White"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
+
+                <Label Text="{Binding StatusMessage}" 
+                       FontSize="18" FontAttributes="Bold"
+                       TextColor="#1E293B" 
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center"/>
+
+                <!-- Attendance details on success -->
+                <Border StrokeShape="RoundRectangle 12" BackgroundColor="White" 
+                        Stroke="#E2E8F0" Padding="16"
+                        IsVisible="{Binding IsSuccess}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="{Binding Result.SessionTitle}" FontSize="16" FontAttributes="Bold" TextColor="#1E293B"/>
+                        <Label Text="{Binding Result.Status}" FontSize="14" TextColor="#10B981"/>
+                        <Label Text="{Binding Result.MarkedAt, StringFormat='Marked at: {0:HH:mm:ss}'}" FontSize="12" TextColor="#64748B"/>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Bottom Actions -->
+        <VerticalStackLayout Grid.Row="1" Padding="16" Spacing="8">
+            <Button Text="Scan Again"
+                    Command="{Binding ResetScannerCommand}"
+                    BackgroundColor="#6366F1"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    HeightRequest="48"
+                    CornerRadius="12"
+                    IsVisible="{Binding IsScanning, Converter={StaticResource InvertedBoolConverter}}"/>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" 
+                               Color="#6366F1" HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

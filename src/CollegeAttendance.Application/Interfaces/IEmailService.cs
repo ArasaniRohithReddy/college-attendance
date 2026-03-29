@@ -1,0 +1,8 @@
+namespace CollegeAttendance.Application.Interfaces;
+
+public interface IEmailService
+{
+    Task SendEmailAsync(string to, string subject, string htmlBody);
+    Task SendBulkEmailAsync(IEnumerable<string> recipients, string subject, string htmlBody);
+    Task SendTemplatedEmailAsync(string to, string templateName, Dictionary<string, string> templateData);
+}

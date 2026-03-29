@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:CollegeAttendance.Mobile.ViewModels"
+             x:Class="CollegeAttendance.Mobile.Views.DashboardPage"
+             x:DataType="vm:DashboardViewModel"
+             Title="Dashboard"
+             BackgroundColor="#F8FAFC">
+
+    <RefreshView Command="{Binding LoadDataCommand}" IsRefreshing="{Binding IsBusy}">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="16">
+                <!-- Greeting -->
+                <Label Text="{Binding Greeting}" FontSize="24" FontAttributes="Bold" TextColor="#1E293B"/>
+
+                <!-- Quick Stats Cards -->
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                    <!-- Today's Sessions -->
+                    <Border Grid.Row="0" Grid.Column="0" StrokeShape="RoundRectangle 12" 
+                            BackgroundColor="White" Stroke="#E2E8F0" Padding="16">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Today" FontSize="12" TextColor="#64748B"/>
+                            <Label Text="{Binding TodaySessionCount}" FontSize="28" FontAttributes="Bold" TextColor="#6366F1"/>
+                            <Label Text="Sessions" FontSize="12" TextColor="#64748B"/>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Unread Notifications -->
+                    <Border Grid.Row="0" Grid.Column="1" StrokeShape="RoundRectangle 12" 
+                            BackgroundColor="White" Stroke="#E2E8F0" Padding="16">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Unread" FontSize="12" TextColor="#64748B"/>
+                            <Label Text="{Binding UnreadNotifications}" FontSize="28" FontAttributes="Bold" TextColor="#F59E0B"/>
+                            <Label Text="Notifications" FontSize="12" TextColor="#64748B"/>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Attendance % -->
+                    <Border Grid.Row="1" Grid.Column="0" StrokeShape="RoundRectangle 12" 
+                            BackgroundColor="White" Stroke="#E2E8F0" Padding="16">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Attendance" FontSize="12" TextColor="#64748B"/>
+                            <Label Text="{Binding AttendancePercentage, StringFormat='{0:F1}%'}" 
+                                   FontSize="28" FontAttributes="Bold" TextColor="#10B981"/>
+                            <Label Text="Overall" FontSize="12" TextColor="#64748B"/>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Defaulters (Admin/Faculty only) -->
+                    <Border Grid.Row="1" Grid.Column="1" StrokeShape="RoundRectangle 12"
+                            BackgroundColor="White" Stroke="#E2E8F0" Padding="16">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Students" FontSize="12" TextColor="#64748B"/>
+                            <Label Text="{Binding TotalStudents}" FontSize="28" FontAttributes="Bold" TextColor="#3B82F6"/>
+                            <Label Text="Total" FontSize="12" TextColor="#64748B"/>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!-- Quick Scan Button -->
+                <Button Text="&#x1F4F7;  Scan QR to Mark Attendance"
+                        Command="{Binding NavigateToScanCommand}"
+                        BackgroundColor="#6366F1"
+                        TextColor="White"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        HeightRequest="52"
+                        CornerRadius="12"/>
+
+                <!-- Today's Sessions List -->
+                <Label Text="Today's Sessions" FontSize="18" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
+
+                <CollectionView ItemsSource="{Binding TodaySessions}" 
+                                SelectionMode="Single"
+                                SelectionChangedCommand="{Binding NavigateToSessionCommand}"
+                                SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}">
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout HorizontalOptions="Center" Padding="24">
+                            <Label Text="No sessions scheduled for today" 
+                                   FontSize="14" TextColor="#94A3B8" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="x:Object">
+                            <Border StrokeShape="RoundRectangle 12" BackgroundColor="White" 
+                                    Stroke="#E2E8F0" Padding="16" Margin="0,4">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label Text="{Binding Title}" FontSize="16" FontAttributes="Bold" TextColor="#1E293B"/>
+                                        <Label Text="{Binding CourseName}" FontSize="13" TextColor="#6366F1"/>
+                                        <Label Text="{Binding TimeRange}" FontSize="12" TextColor="#64748B"/>
+                                        <Label Text="{Binding Room, StringFormat='Room: {0}'}" FontSize="12" TextColor="#64748B"/>
+                                    </VerticalStackLayout>
+                                    <Border Grid.Column="1" StrokeShape="RoundRectangle 8"
+                                            BackgroundColor="#EEF2FF" Padding="8,4" VerticalOptions="Center">
+                                        <Label Text="{Binding StatusDisplay}" FontSize="11" TextColor="#6366F1"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

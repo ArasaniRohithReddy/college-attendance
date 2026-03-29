@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:CollegeAttendance.Mobile.ViewModels"
+             x:Class="CollegeAttendance.Mobile.Views.ProfilePage"
+             x:DataType="vm:ProfileViewModel"
+             Title="Profile"
+             BackgroundColor="#F8FAFC">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="20">
+            <!-- Avatar & Name -->
+            <VerticalStackLayout Spacing="8" HorizontalOptions="Center" Padding="0,24,0,0">
+                <Border StrokeShape="RoundRectangle 40" WidthRequest="80" HeightRequest="80"
+                        HorizontalOptions="Center" BackgroundColor="#EEF2FF">
+                    <Label Text="👤" FontSize="36" HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
+                <Label Text="{Binding FullName}" FontSize="22" FontAttributes="Bold" TextColor="#1E293B"
+                       HorizontalOptions="Center"/>
+                <Label Text="{Binding Email}" FontSize="14" TextColor="#64748B" HorizontalOptions="Center"/>
+                <Border StrokeShape="RoundRectangle 8" Padding="12,4" BackgroundColor="#EEF2FF"
+                        HorizontalOptions="Center">
+                    <Label Text="{Binding Role}" FontSize="12" TextColor="#6366F1" FontAttributes="Bold"/>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Info Cards -->
+            <Border StrokeShape="RoundRectangle 12" BackgroundColor="White" Stroke="#E2E8F0" Padding="16">
+                <VerticalStackLayout Spacing="14">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Label Text="🎓" FontSize="20" VerticalOptions="Center"/>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Student ID" FontSize="11" TextColor="#94A3B8"/>
+                            <Label Text="{Binding StudentId}" FontSize="14" TextColor="#1E293B"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                    <BoxView HeightRequest="1" BackgroundColor="#F1F5F9"/>
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Label Text="🏛️" FontSize="20" VerticalOptions="Center"/>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Department" FontSize="11" TextColor="#94A3B8"/>
+                            <Label Text="{Binding Department}" FontSize="14" TextColor="#1E293B"/>
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Logout -->
+            <Button Text="Sign Out"
+                    Command="{Binding LogoutCommand}"
+                    BackgroundColor="#FEE2E2"
+                    TextColor="#DC2626"
+                    FontAttributes="Bold"
+                    HeightRequest="48"
+                    CornerRadius="10"
+                    Margin="0,12,0,0"/>
+
+            <Label Text="College Attendance v1.0" FontSize="11" TextColor="#CBD5E1"
+                   HorizontalOptions="Center" Margin="0,8,0,0"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:CollegeAttendance.Mobile.ViewModels"
+             xmlns:models="clr-namespace:CollegeAttendance.Mobile.Models"
+             x:Class="CollegeAttendance.Mobile.Views.LeavePage"
+             x:DataType="vm:LeaveViewModel"
+             Title="Leave Requests"
+             BackgroundColor="#F8FAFC">
+
+    <RefreshView Command="{Binding LoadDataCommand}" IsRefreshing="{Binding IsBusy}">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="16">
+
+                <!-- New Leave Button -->
+                <Button Text="{Binding ShowForm, Converter={x:Null}, StringFormat='New Leave Request'}"
+                        Command="{Binding ToggleFormCommand}"
+                        BackgroundColor="#6366F1" TextColor="White" CornerRadius="12"
+                        FontAttributes="Bold" HeightRequest="48"/>
+
+                <!-- New Leave Form -->
+                <Border StrokeShape="RoundRectangle 12" BackgroundColor="White"
+                        Stroke="#E2E8F0" Padding="16" IsVisible="{Binding ShowForm}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="New Leave Request" FontSize="18" FontAttributes="Bold" TextColor="#1E293B"/>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Leave Type" FontSize="12" TextColor="#64748B"/>
+                            <Picker ItemsSource="{Binding LeaveTypes}" 
+                                    SelectedItem="{Binding SelectedLeaveType}"
+                                    BackgroundColor="#F1F5F9" FontSize="14"/>
+                        </VerticalStackLayout>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                <Label Text="Start Date" FontSize="12" TextColor="#64748B"/>
+                                <DatePicker Date="{Binding StartDate}" BackgroundColor="#F1F5F9"
+                                            FontSize="14" MinimumDate="{x:Static sys:DateTime.Today}"
+                                            xmlns:sys="clr-namespace:System;assembly=netstandard"/>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                <Label Text="End Date" FontSize="12" TextColor="#64748B"/>
+                                <DatePicker Date="{Binding EndDate}" BackgroundColor="#F1F5F9"
+                                            FontSize="14" MinimumDate="{x:Static sys:DateTime.Today}"
+                                            xmlns:sys="clr-namespace:System;assembly=netstandard"/>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Reason" FontSize="12" TextColor="#64748B"/>
+                            <Editor Text="{Binding Reason}" Placeholder="Enter reason for leave"
+                                    BackgroundColor="#F1F5F9" FontSize="14" HeightRequest="80"
+                                    AutoSize="TextChanges"/>
+                        </VerticalStackLayout>
+
+                        <Button Text="Submit Leave Request" Command="{Binding SubmitLeaveCommand}"
+                                BackgroundColor="#10B981" TextColor="White" CornerRadius="8"
+                                FontAttributes="Bold" HeightRequest="44"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Leave List -->
+                <Label Text="My Leaves" FontSize="20" FontAttributes="Bold" TextColor="#1E293B"/>
+
+                <CollectionView ItemsSource="{Binding Leaves}">
+                    <CollectionView.EmptyView>
+                        <Label Text="No leave requests yet." TextColor="#94A3B8"
+                               HorizontalOptions="Center" Margin="0,40"/>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:LeaveRequestDto">
+                            <Border StrokeShape="RoundRectangle 12" BackgroundColor="White"
+                                    Stroke="#E2E8F0" Padding="16" Margin="0,4">
+                                <VerticalStackLayout Spacing="8">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Grid.Column="0" Text="{Binding LeaveType}" FontSize="16"
+                                               FontAttributes="Bold" TextColor="#1E293B"/>
+                                        <Border Grid.Column="1" StrokeShape="RoundRectangle 8"
+                                                Padding="8,4" BackgroundColor="#F1F5F9" Stroke="Transparent">
+                                            <Label Text="{Binding StatusDisplay}" FontSize="11"
+                                                   FontAttributes="Bold" TextColor="#475569"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <Label Text="{Binding DateRange}" FontSize="13" TextColor="#64748B"/>
+                                    <Label Text="{Binding Reason}" FontSize="13" TextColor="#475569"
+                                           MaxLines="2" LineBreakMode="TailTruncation"/>
+
+                                    <Label Text="{Binding RejectionReason, StringFormat='Rejected: {0}'}"
+                                           FontSize="12" TextColor="#EF4444"
+                                           IsVisible="{Binding RejectionReason, Converter={x:Null}}"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

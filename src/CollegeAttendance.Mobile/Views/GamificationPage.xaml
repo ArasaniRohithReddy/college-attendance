@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:CollegeAttendance.Mobile.ViewModels"
+             xmlns:models="clr-namespace:CollegeAttendance.Mobile.Models"
+             x:Class="CollegeAttendance.Mobile.Views.GamificationPage"
+             x:DataType="vm:GamificationViewModel"
+             Title="Gamification"
+             BackgroundColor="#F8FAFC">
+
+    <RefreshView Command="{Binding LoadDataCommand}" IsRefreshing="{Binding IsBusy}">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="16">
+
+                <!-- Stats Cards -->
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                    <Border Grid.Column="0" StrokeShape="RoundRectangle 12" BackgroundColor="#EFF6FF"
+                            Stroke="#BFDBFE" Padding="12">
+                        <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
+                            <Label Text="🔥" FontSize="24" HorizontalOptions="Center"/>
+                            <Label Text="{Binding CurrentStreak}" FontSize="22" FontAttributes="Bold"
+                                   TextColor="#1E40AF" HorizontalOptions="Center"/>
+                            <Label Text="Streak" FontSize="11" TextColor="#64748B" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" StrokeShape="RoundRectangle 12" BackgroundColor="#F0FDF4"
+                            Stroke="#BBF7D0" Padding="12">
+                        <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
+                            <Label Text="🏆" FontSize="24" HorizontalOptions="Center"/>
+                            <Label Text="{Binding TotalBadges}" FontSize="22" FontAttributes="Bold"
+                                   TextColor="#166534" HorizontalOptions="Center"/>
+                            <Label Text="Badges" FontSize="11" TextColor="#64748B" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="2" StrokeShape="RoundRectangle 12" BackgroundColor="#FFF7ED"
+                            Stroke="#FED7AA" Padding="12">
+                        <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
+                            <Label Text="⭐" FontSize="24" HorizontalOptions="Center"/>
+                            <Label Text="{Binding CurrentRank, StringFormat='#{0}'}" FontSize="22" FontAttributes="Bold"
+                                   TextColor="#9A3412" HorizontalOptions="Center"/>
+                            <Label Text="Rank" FontSize="11" TextColor="#64748B" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!-- Score -->
+                <Border StrokeShape="RoundRectangle 12" BackgroundColor="White" Stroke="#E2E8F0" Padding="16">
+                    <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
+                        <Label Text="Total Score:" FontSize="16" TextColor="#475569" VerticalOptions="Center"/>
+                        <Label Text="{Binding TotalScore, StringFormat='{0:F0}'}" FontSize="28" FontAttributes="Bold"
+                               TextColor="#7C3AED" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </Border>
+
+                <!-- Badges Section -->
+                <Label Text="My Badges" FontSize="20" FontAttributes="Bold" TextColor="#1E293B"/>
+                <CollectionView ItemsSource="{Binding Badges}" HeightRequest="140">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="12"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.EmptyView>
+                        <Label Text="No badges earned yet. Keep attending!" TextColor="#94A3B8" 
+                               HorizontalOptions="Center" Margin="0,20"/>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:StudentBadgeDto">
+                            <Border StrokeShape="RoundRectangle 12" BackgroundColor="White"
+                                    Stroke="#E2E8F0" Padding="12" WidthRequest="120">
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="🎖️" FontSize="32" HorizontalOptions="Center"/>
+                                    <Label Text="{Binding Badge.Name}" FontSize="12" FontAttributes="Bold"
+                                           TextColor="#1E293B" HorizontalOptions="Center" MaxLines="2"
+                                           LineBreakMode="TailTruncation" HorizontalTextAlignment="Center"/>
+                                    <Label Text="{Binding EarnedAt, StringFormat='{0:MMM dd}'}" FontSize="10"
+                                           TextColor="#94A3B8" HorizontalOptions="Center"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Leaderboard -->
+                <Label Text="Leaderboard" FontSize="20" FontAttributes="Bold" TextColor="#1E293B"/>
+
+                <HorizontalStackLayout Spacing="8">
+                    <Button Text="Weekly"
+                            Command="{Binding ChangePeriodCommand}" CommandParameter="weekly"
+                            FontSize="12" Padding="12,6" CornerRadius="16" HeightRequest="36"/>
+                    <Button Text="Monthly" 
+                            Command="{Binding ChangePeriodCommand}" CommandParameter="monthly"
+                            FontSize="12" Padding="12,6" CornerRadius="16" HeightRequest="36"/>
+                    <Button Text="All Time" 
+                            Command="{Binding ChangePeriodCommand}" CommandParameter="all"
+                            FontSize="12" Padding="12,6" CornerRadius="16" HeightRequest="36"/>
+                </HorizontalStackLayout>
+
+                <CollectionView ItemsSource="{Binding Leaderboard}">
+                    <CollectionView.EmptyView>
+                        <Label Text="No leaderboard data yet." TextColor="#94A3B8" 
+                               HorizontalOptions="Center" Margin="0,20"/>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:LeaderboardEntryDto">
+                            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White"
+                                    Stroke="#E2E8F0" Padding="12" Margin="0,4">
+                                <Grid ColumnDefinitions="40,*,Auto" ColumnSpacing="12">
+                                    <Label Grid.Column="0" Text="{Binding Rank, StringFormat='#{0}'}"
+                                           FontSize="18" FontAttributes="Bold" TextColor="#6366F1"
+                                           VerticalOptions="Center"/>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                        <Label Text="{Binding StudentName}" FontSize="14" FontAttributes="Bold"
+                                               TextColor="#1E293B"/>
+                                        <Label Text="{Binding DepartmentName}" FontSize="11" TextColor="#94A3B8"/>
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="2" Text="{Binding TotalScore, StringFormat='{0:F0} pts'}"
+                                           FontSize="14" FontAttributes="Bold" TextColor="#7C3AED"
+                                           VerticalOptions="Center"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:CollegeAttendance.Mobile.ViewModels"
+             x:Class="CollegeAttendance.Mobile.Views.LoginPage"
+             x:DataType="vm:LoginViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#F8FAFC">
+
+    <Grid RowDefinitions="*,Auto,*" Padding="32">
+        <!-- Logo & Title -->
+        <VerticalStackLayout Grid.Row="0" VerticalOptions="End" Spacing="16" HorizontalOptions="Center">
+            <Border StrokeShape="RoundRectangle 20" 
+                    BackgroundColor="#6366F1" 
+                    HeightRequest="100" WidthRequest="100"
+                    HorizontalOptions="Center">
+                <Label Text="&#x1F393;" FontSize="48" HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Border>
+            <Label Text="College Attendance" 
+                   FontSize="28" FontAttributes="Bold" 
+                   TextColor="#1E293B"
+                   HorizontalOptions="Center"/>
+            <Label Text="Mark attendance with QR codes &amp; geofencing" 
+                   FontSize="14" TextColor="#64748B"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"/>
+        </VerticalStackLayout>
+
+        <!-- Login Button -->
+        <VerticalStackLayout Grid.Row="1" Spacing="16" HorizontalOptions="Fill">
+            <Button Text="Sign in with Google"
+                    Command="{Binding LoginWithGoogleCommand}"
+                    BackgroundColor="#4285F4"
+                    TextColor="White"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    HeightRequest="52"
+                    CornerRadius="12"/>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                               IsVisible="{Binding IsBusy}"
+                               Color="#6366F1"
+                               HorizontalOptions="Center"/>
+
+            <Label Text="{Binding ErrorMessage}" 
+                   TextColor="#EF4444" 
+                   FontSize="14"
+                   HorizontalOptions="Center"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}"/>
+        </VerticalStackLayout>
+
+        <!-- Footer -->
+        <Label Grid.Row="2" 
+               Text="Powered by College Attendance System" 
+               FontSize="12" TextColor="#94A3B8"
+               VerticalOptions="End"
+               HorizontalOptions="Center"
+               Margin="0,0,0,20"/>
+    </Grid>
+</ContentPage>

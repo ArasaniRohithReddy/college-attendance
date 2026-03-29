@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:CollegeAttendance.Mobile.ViewModels"
+             xmlns:models="clr-namespace:CollegeAttendance.Mobile.Models"
+             x:Class="CollegeAttendance.Mobile.Views.EmergencySOSPage"
+             x:DataType="vm:EmergencySOSViewModel"
+             Title="Emergency SOS"
+             BackgroundColor="#F8FAFC">
+
+    <RefreshView Command="{Binding LoadDataCommand}" IsRefreshing="{Binding IsBusy}">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="16">
+
+                <!-- SOS Trigger Section -->
+                <Border StrokeShape="RoundRectangle 16" BackgroundColor="#FEF2F2"
+                        Stroke="#FECACA" Padding="24">
+                    <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
+                        <Label Text="🚨" FontSize="48" HorizontalOptions="Center"/>
+                        <Label Text="Emergency SOS" FontSize="24" FontAttributes="Bold"
+                               TextColor="#DC2626" HorizontalOptions="Center"/>
+                        <Label Text="Send an emergency alert to campus security with your location."
+                               FontSize="13" TextColor="#7F1D1D" HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"/>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Priority" FontSize="12" TextColor="#991B1B"/>
+                            <Picker ItemsSource="{Binding Priorities}"
+                                    SelectedItem="{Binding SelectedPriority}"
+                                    BackgroundColor="White" FontSize="14"/>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Message (optional)" FontSize="12" TextColor="#991B1B"/>
+                            <Editor Text="{Binding Message}" Placeholder="Describe the emergency..."
+                                    BackgroundColor="White" FontSize="14" HeightRequest="80"
+                                    AutoSize="TextChanges"/>
+                        </VerticalStackLayout>
+
+                        <Button Text="🚨 SEND SOS ALERT" Command="{Binding SendSOSCommand}"
+                                IsEnabled="{Binding IsSending, Converter={x:Null}}"
+                                BackgroundColor="#DC2626" TextColor="White" CornerRadius="12"
+                                FontSize="18" FontAttributes="Bold" HeightRequest="56"/>
+
+                        <Label Text="⚠️ You have an active SOS alert"
+                               IsVisible="{Binding HasActiveAlert}"
+                               TextColor="#B91C1C" FontSize="13" FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- My Alerts -->
+                <Label Text="My Alerts" FontSize="20" FontAttributes="Bold" TextColor="#1E293B"/>
+
+                <CollectionView ItemsSource="{Binding MyAlerts}">
+                    <CollectionView.EmptyView>
+                        <Label Text="No emergency alerts." TextColor="#94A3B8"
+                               HorizontalOptions="Center" Margin="0,40"/>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:EmergencySOSDto">
+                            <Border StrokeShape="RoundRectangle 12" BackgroundColor="White"
+                                    Stroke="#E2E8F0" Padding="16" Margin="0,4">
+                                <VerticalStackLayout Spacing="8">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Grid.Column="0" Text="{Binding PriorityDisplay, StringFormat='{0} Priority'}"
+                                               FontSize="16" FontAttributes="Bold" TextColor="#1E293B"/>
+                                        <Border Grid.Column="1" StrokeShape="RoundRectangle 8"
+                                                Padding="8,4" BackgroundColor="#FEF2F2" Stroke="Transparent">
+                                            <Label Text="{Binding StatusDisplay}" FontSize="11"
+                                                   FontAttributes="Bold" TextColor="#DC2626"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <Label Text="{Binding Message}" FontSize="13" TextColor="#475569"
+                                           MaxLines="2" LineBreakMode="TailTruncation"/>
+
+                                    <HorizontalStackLayout Spacing="16">
+                                        <Label Text="{Binding CreatedAt, StringFormat='{0:MMM dd, HH:mm}'}"
+                                               FontSize="11" TextColor="#94A3B8"/>
+                                        <Label Text="{Binding RespondedByName, StringFormat='Responded: {0}'}"
+                                               FontSize="11" TextColor="#10B981"/>
+                                    </HorizontalStackLayout>
+
+                                    <Label Text="{Binding ResolutionNotes, StringFormat='Resolution: {0}'}"
+                                           FontSize="12" TextColor="#475569"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

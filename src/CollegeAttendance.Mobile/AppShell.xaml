@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="CollegeAttendance.Mobile.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:CollegeAttendance.Mobile.Views"
+    Title="College Attendance"
+    Shell.FlyoutBehavior="Disabled">
+
+    <TabBar>
+        <ShellContent Title="Home" Icon="{OnPlatform Android='home', Default=''}"
+                      ContentTemplate="{DataTemplate views:DashboardPage}" Route="dashboard"/>
+        <ShellContent Title="Scan" Icon="{OnPlatform Android='qr_code', Default=''}"
+                      ContentTemplate="{DataTemplate views:QRScanPage}" Route="scan"/>
+        <ShellContent Title="Attendance" Icon="{OnPlatform Android='checklist', Default=''}"
+                      ContentTemplate="{DataTemplate views:AttendancePage}" Route="attendance"/>
+        <ShellContent Title="Outings" Icon="{OnPlatform Android='directions_walk', Default=''}"
+                      ContentTemplate="{DataTemplate views:OutingPage}" Route="outings"/>
+        <ShellContent Title="Rewards" Icon="{OnPlatform Android='star', Default=''}"
+                      ContentTemplate="{DataTemplate views:GamificationPage}" Route="gamification"/>
+        <ShellContent Title="Leave" Icon="{OnPlatform Android='event_busy', Default=''}"
+                      ContentTemplate="{DataTemplate views:LeavePage}" Route="leave"/>
+        <ShellContent Title="SOS" Icon="{OnPlatform Android='emergency', Default=''}"
+                      ContentTemplate="{DataTemplate views:EmergencySOSPage}" Route="emergency"/>
+        <ShellContent Title="Profile" Icon="{OnPlatform Android='person', Default=''}"
+                      ContentTemplate="{DataTemplate views:ProfilePage}" Route="profile"/>
+    </TabBar>
+
+</Shell>

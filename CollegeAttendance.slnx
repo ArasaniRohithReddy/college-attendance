@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CollegeAttendance.API/CollegeAttendance.API.csproj" />
+    <Project Path="src/CollegeAttendance.Application/CollegeAttendance.Application.csproj" />
+    <Project Path="src/CollegeAttendance.Domain/CollegeAttendance.Domain.csproj" />
+    <Project Path="src/CollegeAttendance.Infrastructure/CollegeAttendance.Infrastructure.csproj" />
+    <Project Path="src/CollegeAttendance.Mobile/CollegeAttendance.Mobile.csproj" />
+  </Folder>
+</Solution>

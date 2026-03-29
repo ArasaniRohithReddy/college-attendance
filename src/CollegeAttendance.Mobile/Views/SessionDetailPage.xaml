@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:CollegeAttendance.Mobile.ViewModels"
+             x:Class="CollegeAttendance.Mobile.Views.SessionDetailPage"
+             x:DataType="vm:SessionDetailViewModel"
+             Title="Session Details"
+             BackgroundColor="#F8FAFC">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#6366F1" HorizontalOptions="Center"/>
+
+            <!-- Session Info Card -->
+            <Border StrokeShape="RoundRectangle 12" BackgroundColor="White" Stroke="#E2E8F0" Padding="20"
+                    IsVisible="{Binding Session, Converter={StaticResource IsNotNullConverter}}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="{Binding Session.Title}" FontSize="22" FontAttributes="Bold" TextColor="#1E293B"/>
+                    <Label Text="{Binding Session.CourseName}" FontSize="16" TextColor="#6366F1"/>
+
+                    <BoxView HeightRequest="1" Color="#E2E8F0"/>
+
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="8">
+                        <Label Grid.Row="0" Grid.Column="0" Text="Faculty" FontSize="13" TextColor="#64748B"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding Session.FacultyName}" FontSize="13" TextColor="#1E293B"/>
+
+                        <Label Grid.Row="1" Grid.Column="0" Text="Time" FontSize="13" TextColor="#64748B"/>
+                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding Session.TimeRange}" FontSize="13" TextColor="#1E293B"/>
+
+                        <Label Grid.Row="2" Grid.Column="0" Text="Room" FontSize="13" TextColor="#64748B"/>
+                        <Label Grid.Row="2" Grid.Column="1" Text="{Binding Session.Room}" FontSize="13" TextColor="#1E293B"/>
+
+                        <Label Grid.Row="3" Grid.Column="0" Text="Status" FontSize="13" TextColor="#64748B"/>
+                        <Label Grid.Row="3" Grid.Column="1" Text="{Binding Session.StatusDisplay}" FontSize="13" TextColor="#6366F1" FontAttributes="Bold"/>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="#E2E8F0"/>
+
+                    <!-- Attendance count -->
+                    <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label Text="{Binding Session.PresentCount}" FontSize="20" FontAttributes="Bold" TextColor="#10B981"/>
+                        <Label Text="/" FontSize="20" TextColor="#94A3B8"/>
+                        <Label Text="{Binding Session.TotalStudents}" FontSize="20" FontAttributes="Bold" TextColor="#1E293B"/>
+                        <Label Text="present" FontSize="14" TextColor="#64748B" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Generate QR (Faculty only) -->
+            <Button Text="Generate QR Code"
+                    Command="{Binding GenerateQRCommand}"
+                    BackgroundColor="#6366F1"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    HeightRequest="48"
+                    CornerRadius="12"
+                    IsVisible="{Binding IsFaculty}"/>
+
+            <!-- Active QR Display -->
+            <Border StrokeShape="RoundRectangle 12" BackgroundColor="White" Stroke="#E2E8F0" Padding="20"
+                    IsVisible="{Binding IsQRActive}" HorizontalOptions="Center">
+                <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                    <Label Text="Active QR Code" FontSize="16" FontAttributes="Bold" TextColor="#1E293B" HorizontalOptions="Center"/>
+                    <Image Source="{Binding ActiveQR.QRImageBase64, StringFormat='data:image/png;base64,{0}'}"
+                           HeightRequest="250" WidthRequest="250" Aspect="AspectFit"/>
+                    <Label Text="{Binding ActiveQR.ExpiresAt, StringFormat='Expires: {0:HH:mm:ss}'}" 
+                           FontSize="12" TextColor="#EF4444" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

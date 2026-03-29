@@ -1,0 +1,594 @@
+@CollegeAttendance.API_HostAddress = http://localhost:5172
+@accessToken = YOUR_JWT_TOKEN_HERE
+
+# Replace these placeholder GUIDs with actual values after seeding/creating data
+@userId = 00000000-0000-0000-0000-000000000001
+@departmentId = 00000000-0000-0000-0000-000000000002
+@courseId = 00000000-0000-0000-0000-000000000003
+@facultyId = 00000000-0000-0000-0000-000000000004
+@studentId = 00000000-0000-0000-0000-000000000005
+@sessionId = 00000000-0000-0000-0000-000000000006
+@qrSessionId = 00000000-0000-0000-0000-000000000007
+@recordId = 00000000-0000-0000-0000-000000000008
+@hostelId = 00000000-0000-0000-0000-000000000009
+@outingId = 00000000-0000-0000-0000-000000000010
+@notificationId = 00000000-0000-0000-0000-000000000011
+
+# ========================================
+#  AUTH
+# ========================================
+
+### Google Login
+POST {{CollegeAttendance.API_HostAddress}}/api/auth/google-login
+Content-Type: application/json
+
+{
+  "idToken": "GOOGLE_ID_TOKEN_HERE"
+}
+
+###
+
+### Refresh Token
+POST {{CollegeAttendance.API_HostAddress}}/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "REFRESH_TOKEN_HERE"
+}
+
+###
+
+### Revoke Token
+POST {{CollegeAttendance.API_HostAddress}}/api/auth/revoke
+Authorization: Bearer {{accessToken}}
+
+###
+
+# ========================================
+#  USERS
+# ========================================
+
+### Get Current User
+GET {{CollegeAttendance.API_HostAddress}}/api/users/me
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get All Users (with optional filters)
+GET {{CollegeAttendance.API_HostAddress}}/api/users?page=1&pageSize=20
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get User by ID
+GET {{CollegeAttendance.API_HostAddress}}/api/users/{{userId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Create User (Admin)
+POST {{CollegeAttendance.API_HostAddress}}/api/users
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "email": "student@college.edu",
+  "fullName": "John Doe",
+  "role": 2,
+  "studentId": "STU2024001",
+  "phone": "9876543210",
+  "departmentId": "{{departmentId}}"
+}
+
+###
+
+### Update User
+PUT {{CollegeAttendance.API_HostAddress}}/api/users/{{userId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "fullName": "John Doe Updated",
+  "phone": "9876543211"
+}
+
+###
+
+### Delete User (Admin)
+DELETE {{CollegeAttendance.API_HostAddress}}/api/users/{{userId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+# ========================================
+#  DEPARTMENTS
+# ========================================
+
+### Get All Departments
+GET {{CollegeAttendance.API_HostAddress}}/api/departments
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Department by ID
+GET {{CollegeAttendance.API_HostAddress}}/api/departments/{{departmentId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Create Department (Admin)
+POST {{CollegeAttendance.API_HostAddress}}/api/departments
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Computer Science",
+  "code": "CS",
+  "description": "Department of Computer Science and Engineering"
+}
+
+###
+
+### Update Department (Admin)
+PUT {{CollegeAttendance.API_HostAddress}}/api/departments/{{departmentId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Computer Science & Engineering",
+  "code": "CSE"
+}
+
+###
+
+### Delete Department (Admin)
+DELETE {{CollegeAttendance.API_HostAddress}}/api/departments/{{departmentId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+# ========================================
+#  COURSES
+# ========================================
+
+### Get All Courses
+GET {{CollegeAttendance.API_HostAddress}}/api/courses
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Course by ID
+GET {{CollegeAttendance.API_HostAddress}}/api/courses/{{courseId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Courses by Department
+GET {{CollegeAttendance.API_HostAddress}}/api/courses/department/{{departmentId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get My Courses
+GET {{CollegeAttendance.API_HostAddress}}/api/courses/my-courses
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Create Course (Admin/Faculty)
+POST {{CollegeAttendance.API_HostAddress}}/api/courses
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Data Structures",
+  "code": "CS201",
+  "description": "Introduction to Data Structures and Algorithms",
+  "credits": 4,
+  "semester": 3,
+  "year": 2026,
+  "departmentId": "{{departmentId}}",
+  "facultyId": "{{facultyId}}"
+}
+
+###
+
+### Enroll Student in Course
+POST {{CollegeAttendance.API_HostAddress}}/api/courses/{{courseId}}/enroll
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "studentId": "{{studentId}}"
+}
+
+###
+
+### Unenroll Student from Course
+DELETE {{CollegeAttendance.API_HostAddress}}/api/courses/{{courseId}}/unenroll/{{studentId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+# ========================================
+#  CLASS SESSIONS
+# ========================================
+
+### Get Today's Sessions
+GET {{CollegeAttendance.API_HostAddress}}/api/class-sessions/today
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Sessions by Course
+GET {{CollegeAttendance.API_HostAddress}}/api/class-sessions/course/{{courseId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Session by ID
+GET {{CollegeAttendance.API_HostAddress}}/api/class-sessions/{{sessionId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Create Class Session (Faculty)
+POST {{CollegeAttendance.API_HostAddress}}/api/class-sessions
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "DSA - Linked Lists",
+  "scheduledDate": "2026-03-30T00:00:00",
+  "startTime": "09:00:00",
+  "endTime": "10:00:00",
+  "room": "LH-301",
+  "courseId": "{{courseId}}",
+  "latitude": 12.9716,
+  "longitude": 77.5946,
+  "geofenceRadiusMeters": 100.0
+}
+
+###
+
+### Start Session (Faculty)
+PUT {{CollegeAttendance.API_HostAddress}}/api/class-sessions/{{sessionId}}/start
+Authorization: Bearer {{accessToken}}
+
+###
+
+### End Session (Faculty)
+PUT {{CollegeAttendance.API_HostAddress}}/api/class-sessions/{{sessionId}}/end
+Authorization: Bearer {{accessToken}}
+
+###
+
+# ========================================
+#  QR CODE
+# ========================================
+
+### Generate QR for Session (Faculty)
+POST {{CollegeAttendance.API_HostAddress}}/api/qr/generate
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "classSessionId": "{{sessionId}}",
+  "expirationSeconds": 30
+}
+
+###
+
+### Validate QR Token
+GET {{CollegeAttendance.API_HostAddress}}/api/qr/validate/SAMPLE_QR_TOKEN
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Deactivate QR Session
+POST {{CollegeAttendance.API_HostAddress}}/api/qr/deactivate/{{qrSessionId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+# ========================================
+#  ATTENDANCE
+# ========================================
+
+### Mark Attendance via QR (Student)
+POST {{CollegeAttendance.API_HostAddress}}/api/attendance/mark
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "qrToken": "SCANNED_QR_TOKEN",
+  "latitude": 12.9716,
+  "longitude": 77.5946,
+  "deviceId": "device-001"
+}
+
+###
+
+### Mark Manual Attendance (Faculty)
+POST {{CollegeAttendance.API_HostAddress}}/api/attendance/manual
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "classSessionId": "{{sessionId}}",
+  "entries": [
+    {
+      "studentId": "{{studentId}}",
+      "status": 0,
+      "remarks": "Present"
+    }
+  ]
+}
+
+###
+
+### Get Session Attendance
+GET {{CollegeAttendance.API_HostAddress}}/api/attendance/session/{{sessionId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get My Attendance Report (Student)
+GET {{CollegeAttendance.API_HostAddress}}/api/attendance/my-report
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Student Attendance Report
+GET {{CollegeAttendance.API_HostAddress}}/api/attendance/student/{{studentId}}/report
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Course Attendance Report
+GET {{CollegeAttendance.API_HostAddress}}/api/attendance/course/{{courseId}}/report
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Attendance History (with filters)
+GET {{CollegeAttendance.API_HostAddress}}/api/attendance/history?page=1&pageSize=20
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Defaulters
+GET {{CollegeAttendance.API_HostAddress}}/api/attendance/defaulters?threshold=75
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Update Attendance Record
+PUT {{CollegeAttendance.API_HostAddress}}/api/attendance/{{recordId}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "status": 1,
+  "remarks": "Late arrival - excused"
+}
+
+###
+
+# ========================================
+#  HOSTEL
+# ========================================
+
+### Get All Hostels
+GET {{CollegeAttendance.API_HostAddress}}/api/hostel
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Create Hostel (Admin)
+POST {{CollegeAttendance.API_HostAddress}}/api/hostel
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Boys Hostel A",
+  "block": "A",
+  "capacity": 200
+}
+
+###
+
+### Log Hostel Entry/Exit
+POST {{CollegeAttendance.API_HostAddress}}/api/hostel/log
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "studentId": "{{studentId}}",
+  "hostelId": "{{hostelId}}",
+  "logType": 0,
+  "verificationMethod": "QR"
+}
+
+###
+
+### Get Student Hostel Logs
+GET {{CollegeAttendance.API_HostAddress}}/api/hostel/logs/student/{{studentId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get My Hostel Logs
+GET {{CollegeAttendance.API_HostAddress}}/api/hostel/logs/my
+Authorization: Bearer {{accessToken}}
+
+###
+
+# ========================================
+#  MESS
+# ========================================
+
+### Log Mess Meal
+POST {{CollegeAttendance.API_HostAddress}}/api/mess/log
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "studentId": "{{studentId}}",
+  "mealType": 0,
+  "verificationMethod": "QR"
+}
+
+###
+
+### Get Student Mess Logs
+GET {{CollegeAttendance.API_HostAddress}}/api/mess/logs/student/{{studentId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get My Mess Logs
+GET {{CollegeAttendance.API_HostAddress}}/api/mess/logs/my
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Mess Analytics
+GET {{CollegeAttendance.API_HostAddress}}/api/mess/analytics
+Authorization: Bearer {{accessToken}}
+
+###
+
+# ========================================
+#  OUTING
+# ========================================
+
+### Create Outing Request (Student)
+POST {{CollegeAttendance.API_HostAddress}}/api/outing/request
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "purpose": "Medical appointment",
+  "destination": "City Hospital",
+  "requestedOutTime": "2026-03-30T10:00:00",
+  "expectedReturnTime": "2026-03-30T16:00:00",
+  "emergencyContact": "9876543210"
+}
+
+###
+
+### Get My Outing Requests (Student)
+GET {{CollegeAttendance.API_HostAddress}}/api/outing/my-requests
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Pending Outing Requests (Warden)
+GET {{CollegeAttendance.API_HostAddress}}/api/outing/pending
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Approve Outing (Warden)
+PUT {{CollegeAttendance.API_HostAddress}}/api/outing/{{outingId}}/approve
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Reject Outing (Warden)
+PUT {{CollegeAttendance.API_HostAddress}}/api/outing/{{outingId}}/reject
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "remarks": "Insufficient reason provided"
+}
+
+###
+
+### Security Checkout
+PUT {{CollegeAttendance.API_HostAddress}}/api/outing/{{outingId}}/checkout
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Security Checkin
+PUT {{CollegeAttendance.API_HostAddress}}/api/outing/{{outingId}}/checkin
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Gate Pass
+GET {{CollegeAttendance.API_HostAddress}}/api/outing/{{outingId}}/gate-pass
+Authorization: Bearer {{accessToken}}
+
+###
+
+# ========================================
+#  NOTIFICATIONS
+# ========================================
+
+### Get My Notifications
+GET {{CollegeAttendance.API_HostAddress}}/api/notifications
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Unread Only
+GET {{CollegeAttendance.API_HostAddress}}/api/notifications?unreadOnly=true
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Unread Count
+GET {{CollegeAttendance.API_HostAddress}}/api/notifications/unread-count
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Mark Notification as Read
+PUT {{CollegeAttendance.API_HostAddress}}/api/notifications/{{notificationId}}/read
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Mark All as Read
+PUT {{CollegeAttendance.API_HostAddress}}/api/notifications/read-all
+Authorization: Bearer {{accessToken}}
+
+###
+
+# ========================================
+#  ANALYTICS
+# ========================================
+
+### Get Dashboard
+GET {{CollegeAttendance.API_HostAddress}}/api/analytics/dashboard
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Course Report
+GET {{CollegeAttendance.API_HostAddress}}/api/analytics/course/{{courseId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Department Report
+GET {{CollegeAttendance.API_HostAddress}}/api/analytics/department/{{departmentId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get Attendance Predictions
+GET {{CollegeAttendance.API_HostAddress}}/api/analytics/predictions
+Authorization: Bearer {{accessToken}}
+
+###
+
+### Get My Stats (Student)
+GET {{CollegeAttendance.API_HostAddress}}/api/analytics/my-stats
+Authorization: Bearer {{accessToken}}
+
+###
