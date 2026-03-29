@@ -95,7 +95,7 @@ export default function LeavePage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {data?.items.map(lr => (
+              {(data?.items ?? []).map(lr => (
                 <tr key={lr.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3 font-medium text-gray-900">
                     <CalendarDays className="mr-1 inline h-4 w-4 text-gray-400" />

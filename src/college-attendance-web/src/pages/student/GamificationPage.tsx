@@ -26,7 +26,7 @@ export default function GamificationPage() {
           {/* Badges */}
           <div className="mb-8 rounded-xl border border-gray-200 bg-white p-6">
             <h3 className="mb-4 text-lg font-semibold text-gray-900">Your Badges</h3>
-            {dashboard.badges.length === 0 ? (
+            {!dashboard.badges?.length ? (
               <p className="text-gray-500">No badges earned yet. Keep attending classes!</p>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

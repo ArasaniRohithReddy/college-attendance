@@ -26,7 +26,7 @@ export default function UsersPage() {
 
       {showForm && <CreateUserForm onClose={() => setShowForm(false)} />}
 
-      {!data || data.items.length === 0 ? (
+      {!data?.items?.length ? (
         <EmptyState message="No users found" />
       ) : (
         <>

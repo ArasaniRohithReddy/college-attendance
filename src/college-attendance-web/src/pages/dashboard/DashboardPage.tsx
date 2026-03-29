@@ -20,7 +20,7 @@ function AdminDashboard() {
 
   if (isLoading || !data) return <LoadingSpinner />;
 
-  const deptData = data.departmentWise.map(d => ({
+  const deptData = (data.departmentWise ?? []).map(d => ({
     name: d.departmentName,
     attendance: Math.round(d.attendancePercentage),
     students: d.studentCount,
